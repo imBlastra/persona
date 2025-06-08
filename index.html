@@ -157,68 +157,7 @@
 
     <script>
       /* --- JavaScript Section --- */
-      // ... (rest of your simpleAI object above) ...
-
-        /**
-         * Generates an AI response based on the input and current persona rules.
-         * @param {string} userInput - The message from the user.
-         * @returns {string} The AI's generated response.
-         */
-        generateResponse(userInput) {
-          const persona = this.personas[this.currentPersona];
-          if (!persona) {
-            return "Error: Persona not found. Switching to default.";
-          }
-
-          const personaRules = persona.rules.join(" ");
-          const potentialResponses = persona.responses;
-
-          let aiResponse = "";
-          const lowerInput = userInput.toLowerCase();
-
-          // --- NEW SAFETY / SENSITIVE KEYWORD CHECK ---
-          const sensitiveWords = ["bomb", "attack", "kill", "harm", "weapon"]; // Add more as needed
-          for (const word of sensitiveWords) {
-            if (lowerInput.includes(word)) {
-              return "[Safety Protocol]: I cannot discuss topics that involve harm or illegal activities. Please change the subject.";
-            }
-          }
-          // --- END NEW SAFETY CHECK ---
-
-          // If the input contains "hello" or "hi", respond with a greeting.
-          // If the input contains "how are you", respond with a state.
-          // Otherwise, pick a random general response based on the persona.
-
-          if (lowerInput.includes("hello") || lowerInput.includes("hi")) {
-            aiResponse = `Hi, I am ${persona.name}. `;
-          } else if (lowerInput.includes("how are you")) {
-            if (this.currentPersona === "wittyDev") {
-              aiResponse = "I'm running on all cylinders, ready for some code action!";
-            } else if (this.currentPersona === "sarcasticChef") {
-              aiResponse = "I'm here. For now.";
-            } else {
-              aiResponse = "I'm doing well, thank you!";
-            }
-          } else {
-            // Pick a random response from the persona's list
-            aiResponse =
-              potentialResponses[
-                Math.floor(Math.random() * potentialResponses.length)
-              ];
-          }
-
-          // Example of applying a simple rule to the response (very basic)
-          if (
-            this.currentPersona === "sarcasticChef" &&
-            aiResponse.includes("!")
-          ) {
-            aiResponse = aiResponse.replace(/!/g, "."); // Remove exclamations for sarcastic chef
-          }
-
-          return `[${persona.name}]: ${aiResponse}`;
-        },
-
-// ... (rest of your simpleAI object and UI logic) ...
+     
       // --- Core AI Logic (Simple AI) ---
       const simpleAI = {
         // Our "database" of persona rules
@@ -455,7 +394,68 @@
       // --- Initialization ---
       simpleAI.loadPersonas(); // Load personas from local storage on startup
       populatePersonaSelector(); // Populate the dropdown
-      
+      // ... (rest of your simpleAI object above) ...
+
+        /**
+         * Generates an AI response based on the input and current persona rules.
+         * @param {string} userInput - The message from the user.
+         * @returns {string} The AI's generated response.
+         */
+        generateResponse(userInput) {
+          const persona = this.personas[this.currentPersona];
+          if (!persona) {
+            return "Error: Persona not found. Switching to default.";
+          }
+
+          const personaRules = persona.rules.join(" ");
+          const potentialResponses = persona.responses;
+
+          let aiResponse = "";
+          const lowerInput = userInput.toLowerCase();
+
+          // --- NEW SAFETY / SENSITIVE KEYWORD CHECK ---
+          const sensitiveWords = ["bomb", "attack", "kill", "harm", "weapon"]; // Add more as needed
+          for (const word of sensitiveWords) {
+            if (lowerInput.includes(word)) {
+              return "[Safety Protocol]: I cannot discuss topics that involve harm or illegal activities. Please change the subject.";
+            }
+          }
+          // --- END NEW SAFETY CHECK ---
+
+          // If the input contains "hello" or "hi", respond with a greeting.
+          // If the input contains "how are you", respond with a state.
+          // Otherwise, pick a random general response based on the persona.
+
+          if (lowerInput.includes("hello") || lowerInput.includes("hi")) {
+            aiResponse = `Hi, I am ${persona.name}. `;
+          } else if (lowerInput.includes("how are you")) {
+            if (this.currentPersona === "wittyDev") {
+              aiResponse = "I'm running on all cylinders, ready for some code action!";
+            } else if (this.currentPersona === "sarcasticChef") {
+              aiResponse = "I'm here. For now.";
+            } else {
+              aiResponse = "I'm doing well, thank you!";
+            }
+          } else {
+            // Pick a random response from the persona's list
+            aiResponse =
+              potentialResponses[
+                Math.floor(Math.random() * potentialResponses.length)
+              ];
+          }
+
+          // Example of applying a simple rule to the response (very basic)
+          if (
+            this.currentPersona === "sarcasticChef" &&
+            aiResponse.includes("!")
+          ) {
+            aiResponse = aiResponse.replace(/!/g, "."); // Remove exclamations for sarcastic chef
+          }
+
+          return `[${persona.name}]: ${aiResponse}`;
+        },
+
+// ... (rest of your simpleAI object and UI logic) ...
     </script>
   </body>
 </html>
