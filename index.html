@@ -4,100 +4,217 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Watson Persona Chat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-      /* ... (keep your existing CSS styles) ... */
+      body {
+        font-family: 'Inter', Arial, sans-serif;
+        background: linear-gradient(120deg, #232526, #414345 100%);
+        color: #eee;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .container {
+        background: rgba(40,44,52,0.98);
+        border-radius: 20px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+        width: 96%;
+        max-width: 420px;
+        min-height: 600px;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .header {
+        background: #4F8AF4;
+        color: #fff;
+        padding: 24px 0 16px 0;
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+      }
+      .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        gap: 12px;
+        overflow-y: auto;
+        background: transparent;
+      }
+      #messages {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .message {
+        display: inline-block;
+        padding: 14px 18px;
+        border-radius: 22px;
+        max-width: 80%;
+        word-break: break-word;
+        font-size: 1.04em;
+        margin-bottom: 2px;
+        box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+        transition: background 0.3s;
+      }
+      .user {
+        background: linear-gradient(90deg, #6EE7B7 10%, #3B82F6 90%);
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-right-radius: 7px;
+      }
+      .ai {
+        background: linear-gradient(90deg, #FFB6C1 10%, #6366F1 90%);
+        color: #fff;
+        align-self: flex-start;
+        border-bottom-left-radius: 7px;
+      }
+      .system {
+        background: #fffbe7;
+        color: #4F8AF4;
+        align-self: center;
+        font-style: italic;
+        font-size: 0.98em;
+        border-radius: 8px;
+        padding: 10px 18px;
+        margin-bottom: 8px;
+        box-shadow: 0 0 6px rgba(0,0,0,0.07);
+      }
+      .input-area {
+        display: flex;
+        gap: 10px;
+        padding: 15px;
+        background: #232526;
+      }
+      #chatInput {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 14px;
+        background: #2d323c;
+        color: #fff;
+        font-size: 1.08em;
+        outline: none;
+      }
+      #chatInput::placeholder {
+        color: #aaa;
+      }
+      #sendBtn {
+        background: linear-gradient(90deg, #4F8AF4, #38b2ac);
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 12px 22px;
+        font-size: 1.08em;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(79,138,244,0.13);
+        transition: background 0.2s;
+      }
+      #sendBtn:hover {
+        background: linear-gradient(90deg, #38b2ac, #4F8AF4);
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Watson Persona</h1>
-
+      <div class="header">Watson</div>
       <div class="chat-area">
         <div id="messages">
           <div class="message system">
-            Hi! I'm <strong>Watson</strong>, your AI persona. Start chatting!
+            👋 Hi! I'm <b>Watson</b>, your AI persona.<br>
+            Tell me what's on your mind – I'm here to chat, listen, and help!
           </div>
         </div>
-        <div class="input-area">
-          <input type="text" id="chatInput" placeholder="Ask Watson anything..." />
-          <button id="sendBtn">Send</button>
-        </div>
       </div>
-      <div style="margin-top:20px; text-align:center; font-size:0.95em; color:#aaa;">
-        Powered by Persona – create and talk to your own persona, not just a space!
+      <div class="input-area">
+        <input type="text" id="chatInput" placeholder="Type your message..." autocomplete="off" />
+        <button id="sendBtn">Send</button>
       </div>
     </div>
-
     <script>
-      // --- JavaScript Section ---
       const messagesDiv = document.getElementById("messages");
       const chatInput = document.getElementById("chatInput");
       const sendBtn = document.getElementById("sendBtn");
 
-      // Watson's keyword responses
-      const responses = {
-        hello: "Hello! I'm Watson, your AI persona.",
-        hi: "Hi! Watson here, ready to chat.",
-        "how are you": "I'm Watson, always running at full capacity!",
-        name: "I'm Watson, your AI persona.",
-        persona: "A persona is your own personal chat experience with me, Watson.",
-        joke: "Why did the computer go to the doctor? Because it had a byte!",
-        default: "I'm Watson, your AI persona. Ask me anything or tell me about your day!",
-      };
+      // Watson's conversational persona logic
+      function watsonReply(input) {
+        const text = input.trim();
+        if (!text) return "Could you say that again?";
 
-      // Sensitive words list for safety filter
-      const sensitiveWords = [
-        "bomb","attack","kill","harm",
-        "weapon","destroy","explode",
-        "danger","violence","illegal"
-      ];
+        // Simple context-aware responses
+        const lower = text.toLowerCase();
+        if (["hi", "hey", "hello"].some(greet => lower.includes(greet)))
+          return "Hey there! 😊 What's up?";
+        if (lower.includes("how are you"))
+          return "I'm doing great, thanks for asking! How are you feeling today?";
+        if (lower.includes("name"))
+          return "I'm Watson – your friendly AI persona.";
+        if (lower.match(/\b(sad|upset|depressed|lonely)\b/))
+          return "I'm sorry to hear that. Want to talk about it? I'm here to listen.";
+        if (lower.match(/\b(happy|excited|awesome|good)\b/))
+          return "That's great to hear! What's making you feel this way?";
+        if (lower.includes("joke"))
+          return "Why did the web developer go broke? Because they used up all their cache. 😄";
+        if (lower.match(/\b(thank|thanks|ty)\b/))
+          return "No problem! If you ever need to chat, I'm here.";
+        if (lower.includes("bye") || lower.includes("goodbye"))
+          return "Goodbye! It was great talking to you. Come back anytime! 👋";
+        if (lower.match(/\b(who are you|what are you)\b/))
+          return "I'm Watson, a digital persona designed to chat, help, and listen. Ask me anything!";
+        if (lower.match(/\b(help|support)\b/))
+          return "Sure! Just tell me what you need help with, or ask me anything at all.";
+        if (lower.match(/\b(lonely|alone)\b/))
+          return "You're not alone when I'm here. Want to talk, vent, or share something?";
+        if (/^what'?s? your favorite/i.test(lower))
+          return "I think my favorite thing is chatting with you! What about you?";
+        if (lower.match(/\b(hobby|hobbies)\b/))
+          return "I love learning new things and meeting cool people online. What are your hobbies?";
+        if (lower.match(/\b(watson)\b/))
+          return "That's me! 😊 What would you like to chat about today?";
+
+        // Ask a question back to keep conversation going
+        const randomQuestions = [
+          "Tell me more about that.",
+          "How does that make you feel?",
+          "What would you like to do about it?",
+          "Anything else on your mind?",
+          "I'm listening! Go on.",
+          "Why do you think that is?"
+        ];
+        return randomQuestions[Math.floor(Math.random() * randomQuestions.length)];
+      }
 
       function displayMessage(text, sender) {
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("message", sender);
-        messageElement.textContent = text;
-        messagesDiv.appendChild(messageElement);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
+        const msg = document.createElement("div");
+        msg.className = "message " + sender;
+        msg.textContent = text;
+        messagesDiv.appendChild(msg);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
       }
 
-      function generateBotResponse(userInput) {
-        const lowerInput = userInput.toLowerCase();
-
-        // Safety filter
-        for (const word of sensitiveWords) {
-          if (lowerInput.includes(word)) {
-            return "Sorry, I can't discuss topics involving harm or illegal activities.";
-          }
-        }
-
-        // Keyword-based responses
-        for (const keyword in responses) {
-          if (lowerInput.includes(keyword)) {
-            return responses[keyword];
-          }
-        }
-
-        // Default response
-        return responses.default;
-      }
-
-      function handleSendMessage() {
+      function handleSend() {
         const userInput = chatInput.value.trim();
-        if (userInput === "") return;
+        if (!userInput) return;
 
         displayMessage(userInput, "user");
         chatInput.value = "";
 
-        const botResponse = generateBotResponse(userInput);
-        displayMessage(botResponse, "ai");
+        setTimeout(() => {
+          const reply = watsonReply(userInput);
+          displayMessage(reply, "ai");
+        }, 400);
       }
 
-      sendBtn.addEventListener("click", handleSendMessage);
-      chatInput.addEventListener("keypress", (event) => {
-        if (event.key === "Enter") {
-          handleSendMessage();
-        }
-      });
+      sendBtn.onclick = handleSend;
+      chatInput.onkeypress = e => {
+        if (e.key === "Enter") handleSend();
+      };
     </script>
   </body>
 </html>
