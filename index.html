@@ -3,171 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simple Chat Bot (Dark Mode)</title>
+    <title>Watson Persona Chat</title>
     <style>
-      /* --- CSS Section --- */
-      body {
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background-color: #2c2c2c; /* Dark background */
-        color: #e0e0e0; /* Light text */
-        margin: 0;
-      }
-
-      .container {
-        background-color: #3a3a3a; /* Darker container background */
-        border-radius: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        width: 90%;
-        max-width: 600px;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-      }
-
-      h1 {
-        text-align: center;
-        color: #a0c4ff; /* A nice light blue for the title */
-        margin-bottom: 15px;
-        font-size: 2em;
-      }
-
-      .chat-area {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      #messages {
-        height: 400px; /* Taller chat area */
-        border: 1px solid #555; /* Darker border */
-        border-radius: 8px;
-        padding: 15px;
-        overflow-y: auto;
-        background-color: #444; /* Message background */
-        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
-      }
-
-      .message {
-        padding: 10px 15px;
-        margin-bottom: 10px;
-        border-radius: 20px; /* More rounded */
-        max-width: 85%; /* Slightly wider messages */
-        word-wrap: break-word;
-      }
-
-      .user {
-        background-color: #007bff; /* Blue for user messages */
-        color: white;
-        align-self: flex-end;
-        text-align: right;
-        border-bottom-right-radius: 5px; /* So it's not perfectly round on the bottom right */
-      }
-
-      .ai {
-        background-color: #6c757d; /* Gray for AI messages */
-        color: white;
-        align-self: flex-start;
-        border-bottom-left-radius: 5px; /* Not perfectly round on bottom left */
-      }
-
-      .system {
-        background-color: #ffc107; /* Warning yellow for system messages */
-        color: #333;
-        text-align: center;
-        margin-top: 10px;
-        font-style: italic;
-        font-size: 0.95em;
-        border-radius: 5px;
-        padding: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      }
-
-      .input-area {
-        display: flex;
-        gap: 10px;
-      }
-
-      #chatInput {
-        flex-grow: 1;
-        padding: 12px;
-        border: 1px solid #555;
-        border-radius: 8px;
-        background-color: #555; /* Dark input background */
-        color: #e0e0e0;
-        font-size: 1em;
-      }
-
-      #chatInput::placeholder {
-        color: #bbb;
-      }
-
-      #sendBtn {
-        padding: 12px 20px;
-        background-color: #28a745; /* Green send button */
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1em;
-        transition: background-color 0.2s ease;
-      }
-
-      #sendBtn:hover {
-        background-color: #218838;
-      }
+      /* ... (keep your existing CSS styles) ... */
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Simple Chat Bot</h1>
+      <h1>Watson Persona</h1>
 
       <div class="chat-area">
         <div id="messages">
           <div class="message system">
-            Hello! I am a simple chat bot. Type a message to start!
+            Hi! I'm <strong>Watson</strong>, your AI persona. Start chatting!
           </div>
         </div>
         <div class="input-area">
-          <input type="text" id="chatInput" placeholder="Ask me anything..." />
+          <input type="text" id="chatInput" placeholder="Ask Watson anything..." />
           <button id="sendBtn">Send</button>
         </div>
+      </div>
+      <div style="margin-top:20px; text-align:center; font-size:0.95em; color:#aaa;">
+        Powered by Persona – create and talk to your own persona, not just a space!
       </div>
     </div>
 
     <script>
-      /* --- JavaScript Section --- */
+      // --- JavaScript Section ---
       const messagesDiv = document.getElementById("messages");
       const chatInput = document.getElementById("chatInput");
       const sendBtn = document.getElementById("sendBtn");
 
-      // A simple list of keywords and basic responses
+      // Watson's keyword responses
       const responses = {
-        hello: "Hello there!",
-        hi: "Hi to you too!",
-        "how are you": "I'm just a program, but I'm functioning perfectly!",
-        name: "I don't have a name, but you can call me ChatBot.",
-        weather: "I'm afraid I don't have access to real-time weather data.",
-        joke: "Why don't scientists trust atoms? Because they make up everything!",
-        default: "That's an interesting thought! Could you tell me more?",
+        hello: "Hello! I'm Watson, your AI persona.",
+        hi: "Hi! Watson here, ready to chat.",
+        "how are you": "I'm Watson, always running at full capacity!",
+        name: "I'm Watson, your AI persona.",
+        persona: "A persona is your own personal chat experience with me, Watson.",
+        joke: "Why did the computer go to the doctor? Because it had a byte!",
+        default: "I'm Watson, your AI persona. Ask me anything or tell me about your day!",
       };
 
       // Sensitive words list for safety filter
       const sensitiveWords = [
-        "bomb",
-        "attack",
-        "kill",
-        "harm",
-        "weapon",
-        "destroy",
-        "explode",
-        "danger",
-        "violence",
-        "illegal",
+        "bomb","attack","kill","harm",
+        "weapon","destroy","explode",
+        "danger","violence","illegal"
       ];
 
       function displayMessage(text, sender) {
@@ -181,21 +63,21 @@
       function generateBotResponse(userInput) {
         const lowerInput = userInput.toLowerCase();
 
-        // 1. Safety Filter (highest priority)
+        // Safety filter
         for (const word of sensitiveWords) {
           if (lowerInput.includes(word)) {
-            return "I cannot discuss topics that involve harm, danger, or illegal activities. Please choose a different subject.";
+            return "Sorry, I can't discuss topics involving harm or illegal activities.";
           }
         }
 
-        // 2. Keyword-based responses
+        // Keyword-based responses
         for (const keyword in responses) {
           if (lowerInput.includes(keyword)) {
             return responses[keyword];
           }
         }
 
-        // 3. Default response if no keyword matches
+        // Default response
         return responses.default;
       }
 
@@ -204,14 +86,12 @@
         if (userInput === "") return;
 
         displayMessage(userInput, "user");
-        chatInput.value = ""; // Clear input
+        chatInput.value = "";
 
-        // Get bot response
         const botResponse = generateBotResponse(userInput);
         displayMessage(botResponse, "ai");
       }
 
-      // Event listeners
       sendBtn.addEventListener("click", handleSendMessage);
       chatInput.addEventListener("keypress", (event) => {
         if (event.key === "Enter") {
