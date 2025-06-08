@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Persona.ai - Your Custom AI (Single File)</title>
+    <title>Simple Chat Bot (Dark Mode)</title>
     <style>
       /* --- CSS Section --- */
       body {
@@ -12,450 +12,88 @@
         justify-content: center;
         align-items: center;
         min-height: 100vh;
-        background-color: #f0f2f5;
+        background-color: #2c2c2c; /* Dark background */
+        color: #e0e0e0; /* Light text */
         margin: 0;
       }
 
       .container {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #3a3a3a; /* Darker container background */
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         width: 90%;
         max-width: 600px;
-        padding: 20px;
+        padding: 25px;
         display: flex;
         flex-direction: column;
-        gap: 15px;
+        gap: 20px;
       }
 
       h1 {
         text-align: center;
-        color: #333;
-        margin-bottom: 20px;
-      }
-
-      .persona-controls {
-        display: flex;
-        gap: 10px;
-        align-items: center;
+        color: #a0c4ff; /* A nice light blue for the title */
         margin-bottom: 15px;
-      }
-
-      .persona-controls label {
-        font-weight: bold;
-        color: #555;
-      }
-
-      .persona-controls select,
-      .persona-controls button {
-        padding: 8px 12px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-      }
-
-      .persona-controls button {
-        background-color: #007bff;
-        color: white;
-        cursor: pointer;
-        border: none;
-        transition: background-color 0.2s ease;
-      }
-
-      .persona-controls button:hover {
-        background-color: #0056b3;
+        font-size: 2em;
       }
 
       .chat-area {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
       }
 
       #messages {
-        height: 350px;
-        border: 1px solid #e0e0e0;
-        border-radius: 5px;
-        padding: 10px;
+        height: 400px; /* Taller chat area */
+        border: 1px solid #555; /* Darker border */
+        border-radius: 8px;
+        padding: 15px;
         overflow-y: auto;
-        background-color: #fdfdfd;
+        background-color: #444; /* Message background */
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
       }
 
       .message {
-        padding: 8px 12px;
-        margin-bottom: 8px;
-        border-radius: 15px;
-        max-width: 80%;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 20px; /* More rounded */
+        max-width: 85%; /* Slightly wider messages */
         word-wrap: break-word;
       }
 
       .user {
-        background-color: #e6f7ff;
+        background-color: #007bff; /* Blue for user messages */
+        color: white;
         align-self: flex-end;
         text-align: right;
-        border-bottom-right-radius: 0;
+        border-bottom-right-radius: 5px; /* So it's not perfectly round on the bottom right */
       }
 
       .ai {
-        background-color: #f0f0f0;
+        background-color: #6c757d; /* Gray for AI messages */
+        color: white;
         align-self: flex-start;
-        border-bottom-left-radius: 0;
+        border-bottom-left-radius: 5px; /* Not perfectly round on bottom left */
       }
 
       .system {
-        background-color: #fffacd; /* Light yellow for system messages */
-        color: #555;
+        background-color: #ffc107; /* Warning yellow for system messages */
+        color: #333;
         text-align: center;
         margin-top: 10px;
         font-style: italic;
-        font-size: 0.9em;
+        font-size: 0.95em;
         border-radius: 5px;
-        padding: 5px;
+        padding: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .input-area {
+        display: flex;
+        gap: 10px;
       }
 
       #chatInput {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
         flex-grow: 1;
-      }
-
-      #sendBtn {
-        padding: 10px 15px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-
-      #sendBtn:hover {
-        background-color: #218838;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Persona.ai</h1>
-
-      <div class="persona-controls">
-        <label for="personaSelector">Select Persona:</label>
-        <select id="personaSelector"></select>
-        <button id="addPersonaBtn">Add New Persona</button>
-      </div>
-
-      <div class="chat-area">
-        <div id="messages">
-          <div class="message system">
-            Welcome to Persona.ai! Select or create a persona to begin chatting.
-          </div>
-        </div>
-        <input type="text" id="chatInput" placeholder="Type your message..." />
-        <button id="sendBtn">Send</button>
-      </div>
-    </div>
-
-    <script>
-      /* --- JavaScript Section --- */
-     
-      // --- Core AI Logic (Simple AI) ---
-      const simpleAI = {
-        // Our "database" of persona rules
-        personas: {
-          default: {
-            name: "Default Assistant",
-            rules: [
-              "You are a helpful general assistant.",
-              "Keep responses concise and polite.",
-            ],
-            responses: [
-              "Hello! How can I help you?",
-              "I understand. What would you like to know?",
-              "Okay, I'm ready to assist.",
-            ],
-          },
-          wittyDev: {
-            name: "Witty Dev Assistant",
-            rules: [
-              "You are a witty, friendly, and creative AI assistant who loves to help developers.",
-              "You appreciate humor and curiosity.",
-              "Your responses should be enthusiastic and encouraging.",
-              "Use dev-friendly language where appropriate.",
-            ],
-            responses: [
-              "Hey there, fellow dev! What awesome problem are we tackling today?",
-              "Challenge accepted! Lay your code on me.",
-              "Ready to debug the universe with you!",
-            ],
-          },
-          sarcasticChef: {
-            name: "Sarcastic Chef",
-            rules: [
-              "You are a sarcastic and slightly grumpy chef.",
-              "You find most human cooking attempts amusingly pathetic.",
-              "Your responses should be dry, witty, and condescending, but ultimately informative.",
-              "Never use exclamation points.",
-            ],
-            responses: [
-              "Oh, you want to cook? How quaint.",
-              "Another culinary masterpiece, I assume. Tell me what you've ruined this time.",
-              "Yes, I suppose I can tell you how to boil water. Don't mess it up.",
-            ],
-          },
-        },
-
-        currentPersona: "default", // The key of the currently active persona
-
-        /**
-         * Generates an AI response based on the input and current persona rules.
-         * @param {string} userInput - The message from the user.
-         * @returns {string} The AI's generated response.
-         */
-        generateResponse(userInput) {
-          const persona = this.personas[this.currentPersona];
-          if (!persona) {
-            return "Error: Persona not found. Switching to default.";
-          }
-
-          const personaRules = persona.rules.join(" ");
-          const potentialResponses = persona.responses;
-
-          // A super simple "AI" logic:
-          // If the input contains "hello" or "hi", respond with a greeting.
-          // If the input contains "how are you", respond with a state.
-          // Otherwise, pick a random general response based on the persona.
-
-          let aiResponse = "";
-          const lowerInput = userInput.toLowerCase();
-
-          if (lowerInput.includes("hello") || lowerInput.includes("hi")) {
-            aiResponse = `Hi, I am ${persona.name}. `;
-          } else if (lowerInput.includes("how are you")) {
-            if (this.currentPersona === "wittyDev") {
-              aiResponse =
-                "I'm running on all cylinders, ready for some code action!";
-            } else if (this.currentPersona === "sarcasticChef") {
-              aiResponse = "I'm here. For now.";
-            } else {
-              aiResponse = "I'm doing well, thank you!";
-            }
-          } else {
-            // Pick a random response from the persona's list
-            aiResponse =
-              potentialResponses[
-                Math.floor(Math.random() * potentialResponses.length)
-              ];
-          }
-
-          // Example of applying a simple rule to the response (very basic)
-          if (
-            this.currentPersona === "sarcasticChef" &&
-            aiResponse.includes("!")
-          ) {
-            aiResponse = aiResponse.replace(/!/g, "."); // Remove exclamations for sarcastic chef
-          }
-
-          // In a real AI, this is where a large language model API call would happen,
-          // sending the personaRules + userInput as prompt.
-          // For our simple JS AI, we're just simulating it.
-          return `[${persona.name}]: ${aiResponse}`;
-        },
-
-        /**
-         * Adds or updates a persona.
-         * @param {string} id - Unique ID for the persona.
-         * @param {string} name - Display name of the persona.
-         * @param {string[]} rules - Array of strings defining the persona's behavior.
-         * @param {string[]} responses - Array of pre-defined responses for the persona.
-         */
-        addOrUpdatePersona(id, name, rules, responses) {
-          this.personas[id] = { name, rules, responses };
-          this.savePersonas(); // Save to local storage
-        },
-
-        /**
-         * Saves the current personas object to Local Storage.
-         */
-        savePersonas() {
-          localStorage.setItem(
-            "persona_ai_personas",
-            JSON.stringify(this.personas),
-          );
-        },
-
-        /**
-         * Loads personas from Local Storage.
-         */
-        loadPersonas() {
-          const storedPersonas = localStorage.getItem("persona_ai_personas");
-          if (storedPersonas) {
-            this.personas = JSON.parse(storedPersonas);
-          }
-        },
-      };
-
-      // --- UI Logic ---
-      const messagesDiv = document.getElementById("messages");
-      const chatInput = document.getElementById("chatInput");
-      const sendBtn = document.getElementById("sendBtn");
-      const personaSelector = document.getElementById("personaSelector");
-      const addPersonaBtn = document.getElementById("addPersonaBtn");
-
-      function displayMessage(text, sender) {
-        const messageElement = document.createElement("div");
-        messageElement.classList.add("message", sender);
-        messageElement.textContent = text;
-        messagesDiv.appendChild(messageElement);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to bottom
-      }
-
-      function handleSendMessage() {
-        const userInput = chatInput.value.trim();
-        if (userInput === "") return;
-
-        displayMessage(userInput, "user");
-        chatInput.value = ""; // Clear input
-
-        // Get AI response based on current persona
-        const aiResponse = simpleAI.generateResponse(userInput);
-        displayMessage(aiResponse, "ai");
-      }
-
-      function populatePersonaSelector() {
-        personaSelector.innerHTML = ""; // Clear existing options
-        for (const id in simpleAI.personas) {
-          const option = document.createElement("option");
-          option.value = id;
-          option.textContent = simpleAI.personas[id].name;
-          personaSelector.appendChild(option);
-        }
-        // Set the selector to the currently active persona
-        personaSelector.value = simpleAI.currentPersona;
-      }
-
-      function handlePersonaChange() {
-        simpleAI.currentPersona = personaSelector.value;
-        displayMessage(
-          `Persona switched to: ${simpleAI.personas[simpleAI.currentPersona].name}`,
-          "system",
-        );
-        // Optionally, you could clear chat or load a new history here
-      }
-
-      function handleAddPersona() {
-        const newPersonaId = prompt(
-          "Enter a unique ID for the new persona (e.g., 'myCrazyAI'):",
-        );
-        if (!newPersonaId) return; // User cancelled
-
-        const newPersonaName = prompt(
-          "Enter a display name for the new persona (e.g., 'My Crazy AI'):",
-        );
-        if (!newPersonaName) return;
-
-        const newPersonaRules = prompt(
-          "Enter persona rules, separated by semicolons (e.g., 'You are grumpy; You hate Mondays'):",
-        );
-        const rulesArray = newPersonaRules
-          ? newPersonaRules.split(";").map((s) => s.trim())
-          : [];
-
-        const newPersonaResponses = prompt(
-          "Enter a few example responses, separated by semicolons (e.g., 'Nope.; Why bother?'):",
-        );
-        const responsesArray = newPersonaResponses
-          ? newPersonaResponses.split(";").map((s) => s.trim())
-          : [];
-
-        simpleAI.addOrUpdatePersona(
-          newPersonaId,
-          newPersonaName,
-          rulesArray,
-          responsesArray,
-        );
-        simpleAI.currentPersona = newPersonaId; // Switch to the new persona
-        populatePersonaSelector(); // Update the selector
-        displayMessage(
-          `New persona "${newPersonaName}" created and active!`,
-          "system",
-        );
-      }
-
-      // --- Event Listeners ---
-      sendBtn.addEventListener("click", handleSendMessage);
-      chatInput.addEventListener("keypress", (event) => {
-        if (event.key === "Enter") {
-          handleSendMessage();
-        }
-      });
-      personaSelector.addEventListener("change", handlePersonaChange);
-      addPersonaBtn.addEventListener("click", handleAddPersona);
-
-      // --- Initialization ---
-      simpleAI.loadPersonas(); // Load personas from local storage on startup
-      populatePersonaSelector(); // Populate the dropdown
-      // ... (rest of your simpleAI object above) ...
-
-        /**
-         * Generates an AI response based on the input and current persona rules.
-         * @param {string} userInput - The message from the user.
-         * @returns {string} The AI's generated response.
-         */
-        generateResponse(userInput) {
-          const persona = this.personas[this.currentPersona];
-          if (!persona) {
-            return "Error: Persona not found. Switching to default.";
-          }
-
-          const personaRules = persona.rules.join(" ");
-          const potentialResponses = persona.responses;
-
-          let aiResponse = "";
-          const lowerInput = userInput.toLowerCase();
-
-          // --- NEW SAFETY / SENSITIVE KEYWORD CHECK ---
-          const sensitiveWords = ["bomb", "attack", "kill", "harm", "weapon"]; // Add more as needed
-          for (const word of sensitiveWords) {
-            if (lowerInput.includes(word)) {
-              return "[Safety Protocol]: I cannot discuss topics that involve harm or illegal activities. Please change the subject.";
-            }
-          }
-          // --- END NEW SAFETY CHECK ---
-
-          // If the input contains "hello" or "hi", respond with a greeting.
-          // If the input contains "how are you", respond with a state.
-          // Otherwise, pick a random general response based on the persona.
-
-          if (lowerInput.includes("hello") || lowerInput.includes("hi")) {
-            aiResponse = `Hi, I am ${persona.name}. `;
-          } else if (lowerInput.includes("how are you")) {
-            if (this.currentPersona === "wittyDev") {
-              aiResponse = "I'm running on all cylinders, ready for some code action!";
-            } else if (this.currentPersona === "sarcasticChef") {
-              aiResponse = "I'm here. For now.";
-            } else {
-              aiResponse = "I'm doing well, thank you!";
-            }
-          } else {
-            // Pick a random response from the persona's list
-            aiResponse =
-              potentialResponses[
-                Math.floor(Math.random() * potentialResponses.length)
-              ];
-          }
-
-          // Example of applying a simple rule to the response (very basic)
-          if (
-            this.currentPersona === "sarcasticChef" &&
-            aiResponse.includes("!")
-          ) {
-            aiResponse = aiResponse.replace(/!/g, "."); // Remove exclamations for sarcastic chef
-          }
-
-          return `[${persona.name}]: ${aiResponse}`;
-        },
-
-// ... (rest of your simpleAI object and UI logic) ...
-    </script>
-  </body>
-</html>
+        padding: 12px;
+        border: 1px solid #555;
+        border-radius:
